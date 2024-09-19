@@ -1,5 +1,5 @@
 # Grounded SAM 2
-Grounded SAM 2 Stream to track anything using natural language queries with [Grounding DINO](https://arxiv.org/abs/2303.05499), [Grounding DINO 1.5](https://arxiv.org/abs/2405.10300), [Florence-2](https://arxiv.org/abs/2311.06242) nd [SAM 2](https://arxiv.org/abs/2408.00714).
+Grounded SAM 2 Stream to track anything using natural language queries with [Grounding DINO](https://arxiv.org/abs/2303.05499), [Grounding DINO 1.5](https://arxiv.org/abs/2405.10300), [SAM 2](https://arxiv.org/abs/2408.00714), and [LLMs](https://arxiv.org/abs/2307.06435).
 
 
 <div align=center>
