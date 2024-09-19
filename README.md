@@ -42,13 +42,13 @@ bash download_ckpts.sh
      bash download_ckpts.sh
     ```
 -->
-3Set up CUDA for GPU usage with Grounding DINO (Optional)
+2. Set up CUDA for GPU usage with Grounding DINO (Optional)
 
-Since we need the CUDA compilation environment to compile the `Deformable Attention` operator used in Grounding DINO, we need to check whether the CUDA environment variables have been set correctly (which you can refer to [Grounding DINO Installation](https://github.com/IDEA-Research/GroundingDINO?tab=readme-ov-file#hammer_and_wrench-install) for more details). You can set the environment variable manually as follows if you want to build a local GPU environment for Grounding DINO to run Grounded SAM 2:
+  -  Since we need the CUDA compilation environment to compile the `Deformable Attention` operator used in Grounding DINO, we need to check whether the CUDA environment variables have been set correctly (which you can refer to [Grounding DINO Installation](https://github.com/IDEA-Research/GroundingDINO?tab=readme-ov-file#hammer_and_wrench-install) for more details). You can set the environment variable manually as follows if you want to build a local GPU environment for Grounding DINO to run Grounded SAM 2:
 
-```bash
-export CUDA_HOME=/path/to/cuda-12.1/
-```
+  - ```bash
+    export CUDA_HOME=/path/to/cuda-12.1/
+    ```
 
 ## Demo
 
