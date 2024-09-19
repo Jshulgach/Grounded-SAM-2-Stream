@@ -14,7 +14,7 @@ Grounded SAM 2 Stream to track anything using natural language queries with [Gro
 ## Contents
 - [Installation](#installation)
 - [Grounded SAM 2 Streaming Demos](#demo)
-- [Citation](#citation)
+<!--- [Citation](#citation) -->
 - [Acknowledgements](#acknowledgements)
 
 
@@ -60,7 +60,7 @@ python fast_sam.py 0
 ## TO-DO
 * Implement LLM for parsing natural language requests
 * Timestamped image storage and dated object detection queries
-
+<!--
 ### Citation
 
 If you find this project helpful for your research, please consider citing the following BibTeX entry.
@@ -117,6 +117,7 @@ If you find this project helpful for your research, please consider citing the f
       primaryClass={cs.CV}
 }
 ```
+-->
 
 ### Acknowledgements
 - [Segment-Anything-2-Real-Time](https://github.com/Gy920/segment-anything-2-real-time)
