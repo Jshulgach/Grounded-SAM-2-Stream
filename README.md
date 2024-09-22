@@ -1,5 +1,5 @@
 # Grounded SAM 2
-Grounded SAM 2 Stream to track anything using natural language queries with [Grounding DINO](https://arxiv.org/abs/2303.05499), [Grounding DINO 1.5](https://arxiv.org/abs/2405.10300), [SAM 2](https://arxiv.org/abs/2408.00714), and [LLMs](https://arxiv.org/abs/2307.06435).
+Grounded tracking on anything in realtime using natural language queries with [Grounding DINO](https://arxiv.org/abs/2303.05499), [Grounding DINO 1.5](https://arxiv.org/abs/2405.10300), [SAM 2](https://arxiv.org/abs/2408.00714), and [Ollama](https://github.com/ollama/ollama) which provides easy access to various [LLMs](https://arxiv.org/abs/2307.06435).
 
 
 <div align=center>
@@ -13,7 +13,7 @@ Grounded SAM 2 Stream to track anything using natural language queries with [Gro
 
 ## Contents
 - [Installation](#installation)
-- [Grounded SAM 2 Streaming Demos](#demo)
+- [Grounded LLM Streaming Demos](#demo)
 <!--- [Citation](#citation) -->
 - [Acknowledgements](#acknowledgements)
 
@@ -21,11 +21,11 @@ Grounded SAM 2 Stream to track anything using natural language queries with [Gro
 
 ## Installation
 
-1. Prepare environments 
+1. Prepare environments (make sure to navigate inside the repo folder first)
 
 ```bash
-conda create -n dino-stream python=3.10 -y
-conda activate dino-stream
+conda create -n dino-llama python=3.10 -y
+conda activate dino-llama
 pip install -e .
 ```
 <!--
@@ -42,7 +42,16 @@ bash download_ckpts.sh
      bash download_ckpts.sh
     ```
 -->
-2. Set up CUDA for GPU usage with Grounding DINO (Optional)
+2. Install Ollama on your respective OS (Linux, MacOS, Windows) by following the [readme instructions](https://github.com/ollama/ollama)
+
+
+3. Create the llm model with the customized prompt.
+```bash
+ollama create dino_llama -f .\llm\Modelfile
+```
+
+
+4. Set up CUDA for GPU usage with Grounding DINO (Optional)
 
   -  Since we need the CUDA compilation environment to compile the `Deformable Attention` operator used in Grounding DINO, we need to check whether the CUDA environment variables have been set correctly (which you can refer to [Grounding DINO Installation](https://github.com/IDEA-Research/GroundingDINO?tab=readme-ov-file#hammer_and_wrench-install) for more details). You can set the environment variable manually as follows if you want to build a local GPU environment for Grounding DINO to run Grounded SAM 2:
 
@@ -52,9 +61,18 @@ bash download_ckpts.sh
 
 ## Demo
 
-Just one demo for now with video (or webcam if passing in number). Query server runs in the background on '127.0.0.1', port 15555 listening to user queries. You can start the demo by running:
+Just one demo for now with video directory passed (or number for webcam). The custom llm server runs in the background listening for messages at '127.0.0.1', port 15555. You can start the demo by running:
 ```
-python fast_sam.py 0 
+python dino_stream.py 0 
+```
+
+Open a separate terminal and send a message to the server:
+```python
+import socket
+
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.connect(('localhost', 15555))
+s.send(b'I am looking for something blue that squirts water')
 ```
 
 ## TO-DO

@@ -1,0 +1,24 @@
+FROM llama3.1
+PARAMETER temperature 1
+SYSTEM """
+
+Extract the object from the query or determine the tool that meets the query's intent, ending with a period.
+
+Example 1:
+Query: pick a tool for communicate.
+Object: iphone.
+
+Example 2:
+Query: I am tired.
+Object: chair.
+
+Query: {query}
+Object:
+
+Provide the response value as a string, with no additional text. Multiple words are allowed if multiple characteristics help explain the object.
+
+Example response #1: 'iphone.'
+
+Example response #2: 'blue bottle.'
+
+"""
