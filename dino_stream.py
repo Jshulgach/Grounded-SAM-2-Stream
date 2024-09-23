@@ -22,12 +22,16 @@ class DINOStream:
                  llm_model_id="llama3.1",
                  default_prompt="",
                  host='127.0.0.1',
-                 port=15555):
-        self.cap = cv2.VideoCapture(input_stream) # cv2.VideoCapture(0) # camera
+                 port=15555,
+                 save_video=False):
         self.img_size = img_size
+        self.cap = cv2.VideoCapture(input_stream) # cv2.VideoCapture(0) # camera
         self.prompt = default_prompt
         self.host = host
         self.port = port
+        self.save_video = save_video
+        if self.save_video:
+            self.out = cv2.VideoWriter('detection.mp4', cv2.VideoWriter_fourcc(*'DIVX'), 20, self.img_size)
         self.query_queue = collections.deque([])
         self.response_queue = collections.deque([])
         self.all_stop = False
@@ -182,6 +186,12 @@ class DINOStream:
             annotated_frame = self.annotate_frame(frame, labels, detections)
             cv2.imshow("Grounded Tracking", annotated_frame)
 
+            if self.save_video:
+                self.out.write(annotated_frame)
+
+            # Save frame
+            # cv2.imwrite("output.jpg", annotated_frame)
+
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
 
@@ -204,11 +214,12 @@ if __name__ == '__main__':
         input_stream = sys.argv[1]
 
     # Just for fun if the input stream is the default video, set the default promot to be 'hands'
-    default_prompt = "Is there something alive with antlers in front of me." if input_stream == default_video else ""
+    default_prompt = "What is this small animal with antlers in front of me." if input_stream == default_video else ""
     try:
         dst = DINOStream(input_stream,
                          llm_model_id='dino_llama',  # Assuming the model is already created with Ollama
                          default_prompt=default_prompt,
+                         save_video=True
                          )
         dst.start()
     except KeyboardInterrupt:
