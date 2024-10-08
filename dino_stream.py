@@ -238,6 +238,7 @@ class DINOStream:
         print("Searching in saved images...")
         image_files = self.get_all_jpg_files(self.image_directory)  # Get all jpg files in the image directory
         for image_file in image_files:
+            print(f"Processing image: {image_file}")
             # Extract the timestamp from the file name
             camera_id = image_file.split('_')[1]  # Extract camera index from file name
             timestamp_str = image_file.split('_')[-1].split('.')[0]  # Assuming format: frame_camX_YYYYMMDD-HHMMSS.jpg
@@ -268,9 +269,6 @@ class DINOStream:
 
             # Display the detected image
             cv2.imshow(f"Detected Object - Camera {camera_id}", annotated_image)
-            printf("Press q or Esc to close the window.")
-            if cv2.waitKey(1) & 0xFF in [ord('q'), 27]:
-                pass
 
         if not latest_files:
             print("Object not found in saved images.")
