@@ -46,7 +46,8 @@ REQUIRED_PACKAGES = [
     "yapf",  
     "timm",  
     "supervision>=0.22.0",  
-    "pycocotools",  
+    "pycocotools",
+    "ollama",
 ]
 
 EXTRA_PACKAGES = {
