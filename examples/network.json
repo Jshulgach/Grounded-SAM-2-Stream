@@ -1,0 +1,5 @@
+{
+  "sources": [
+    {"id": "gripper", "name": "Gripper camera", "kind": "mjpeg", "uri": "http://192.0.2.1:81/stream", "sample_fps": 1}
+  ]
+}

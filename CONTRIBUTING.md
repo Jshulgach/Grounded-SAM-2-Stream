@@ -1,31 +1,16 @@
-# Contributing to segment-anything
-We want to make contributing to this project as easy and transparent as
-possible.
+# Contributing to Grounded Stream
 
-## Pull Requests
-We actively welcome your pull requests.
+Please open an issue describing a reproducible bug or proposed feature before a large change. Use synthetic fixtures or consented sample video; do not include household footage, tokens, camera passwords, or private network configuration.
 
-1. Fork the repo and create your branch from `main`.
-2. If you've added code that should be tested, add tests.
-3. If you've changed APIs, update the documentation.
-4. Ensure the test suite passes.
-5. Make sure your code lints, using the `ufmt format` command. Linting requires `black==24.2.0`, `usort==1.0.2`, and `ufmt==2.0.0b2`, which can be installed via `pip install -e ".[dev]"`.
-6. If you haven't already, complete the Contributor License Agreement ("CLA").
+1. Create a branch from main.
+2. Install the service and dev extras in a virtual environment.
+3. Run pytest, Ruff, and the wheel build documented in README.
+4. Add tests for failure, cancellation and recovery when changing runtime behavior.
+5. Update API contracts and migration notes when changing observable behavior.
+6. State exactly which real devices and models were tested; mock tests do not prove live-camera behavior.
 
-## Contributor License Agreement ("CLA")
-In order to accept your pull request, we need you to submit a CLA. You only need
-to do this once to work on any of Facebook's open source projects.
+Keep the base package importable without Torch, OpenCV, Transformers or an LLM server. Keep framework dependencies optional and preserve independent use outside Homebase.
 
-Complete your CLA here: <https://code.facebook.com/cla>
+This project does not require the unrelated Facebook CLA referenced by the original template. Contributions follow the repository LICENSE; preserve existing third-party notices.
 
-## Issues
-We use GitHub issues to track public bugs. Please ensure your description is
-clear and has sufficient instructions to be able to reproduce the issue.
-
-Facebook has a [bounty program](https://www.facebook.com/whitehat/) for the safe
-disclosure of security bugs. In those cases, please go through the process
-outlined on that page and do not file a public issue.
-
-## License
-By contributing to segment-anything, you agree that your contributions will be licensed
-under the LICENSE file in the root directory of this source tree.
+For security or conduct issues, contact a repository maintainer using the contact method on their GitHub profile. If private vulnerability reporting is enabled, use the repository Security tab. Do not publish private recordings, credentials or exploit details in an ordinary issue.

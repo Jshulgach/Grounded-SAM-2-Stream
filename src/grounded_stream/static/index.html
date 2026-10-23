@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grounded Stream · Object search</title><link rel="stylesheet" href="/static/style.css"><script src="/static/app.js" defer></script></head>
+<body><main><header><a class="brand" href="/" aria-label="Grounded Stream home"><span class="mark">G</span><span>GROUNDED<span class="muted"> / STREAM</span></span></a><span id="health" class="pill">Connecting</span></header>
+<section class="intro"><span class="eyebrow">LOCAL VISION WORKSPACE</span><h1>Find what matters.</h1><p>Search your cameras and video with a few words.</p></section>
+<div class="workspace"><aside><form id="search-form">
+<label for="targets">What are you looking for?</label><textarea id="targets" rows="2" maxlength="407" placeholder="a deer; a red backpack" required>a deer</textarea><p class="hint">Separate objects with a semicolon.</p>
+<fieldset><legend>Look in</legend><div id="sources"></div></fieldset>
+<div class="search-mode"><div><span class="control-label">Search window</span><span id="mode-summary">Continuous</span></div><label class="toggle"><input id="timed" type="checkbox" role="switch" aria-controls="duration-options"><span class="toggle-track" aria-hidden="true"></span><span>Timed search</span></label></div>
+<div id="duration-options" hidden><label for="duration">Duration</label><select id="duration" disabled><option value="5">5 seconds</option><option value="10" selected>10 seconds</option><option value="30">30 seconds</option><option value="60">1 minute</option><option value="120">2 minutes</option></select></div>
+<p id="mode-hint" class="hint">Runs until stopped, even if this tab closes. Refresh to reconnect.</p>
+<button class="primary" id="start" type="submit" disabled>Start search <span aria-hidden="true">↗</span></button><button id="cancel" type="button" hidden>Stop search</button>
+<p id="message" role="status" aria-live="polite">Loading configured sources…</p>
+</form><details><summary>Connection</summary><label for="token">Access token, if configured</label><input id="token" type="password" autocomplete="off"><button id="reconnect" type="button">Reconnect</button><p class="hint">This tab keeps the token in memory.</p></details>
+<p class="local-note">Local processing. Cameras open only during a search. Previews stay in memory.</p></aside>
+<section class="results" aria-label="Search results"><div class="result-heading"><div><span class="eyebrow">OBSERVATIONS</span><h2 id="result-title">Your next discovery.</h2></div><button id="export" type="button" hidden>Export JSON</button></div>
+<div id="empty" class="empty"><span class="reticle" aria-hidden="true">⌖</span><h3>A new perspective, in a few words.</h3><p>Choose a source and start a search.<br>The first search may take longer while the model loads.</p></div>
+<div id="metrics" class="metrics" hidden></div><div id="cards"></div></section></div>
+<footer><span>Grounded Stream <span class="muted">0.2</span></span><span>Text-prompted object detection</span></footer></main></body></html>

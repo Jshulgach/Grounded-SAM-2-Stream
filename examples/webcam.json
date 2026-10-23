@@ -1,0 +1,5 @@
+{
+  "sources": [
+    {"id": "desk", "name": "Desk webcam", "kind": "webcam", "uri": 0, "sample_fps": 1}
+  ]
+}

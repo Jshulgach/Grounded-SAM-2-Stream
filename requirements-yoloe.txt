@@ -1,0 +1,6 @@
+# Optional experiment environment. Install the matching CUDA Torch pair first.
+# This text encoder is pinned; the service never installs it automatically.
+ultralytics==8.4.155
+ftfy==6.3.1
+regex==2026.9.10
+clip @ git+https://github.com/ultralytics/CLIP.git@a13192f8cb767260d7dfd98c843b0716593169e7

@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "grounded-sam2-stream"
+version = "0.2.0"
+description = "Local, text-prompted multi-source object search with a standalone UI and bounded workers."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+license-files = ["LICENSE", "LICENSE_groundingdino", "LICENSE_cctorch"]
+authors = [{name = "Grounded-SAM-2-Stream contributors"}]
+dependencies = []
+classifiers = ["Programming Language :: Python :: 3", "Operating System :: OS Independent"]
+
+[project.urls]
+Repository = "https://github.com/Jshulgach/Grounded-SAM-2-Stream"
+
+[project.optional-dependencies]
+vision = ["torch>=2.6,<3", "torchvision>=0.21,<1", "transformers==5.17.0", "opencv-python-headless==5.0.0.93", "Pillow==12.3.0"]
+yoloe = ["ultralytics==8.4.155", "ftfy==6.3.1", "regex==2026.9.10"]
+service = ["fastapi==0.141.1", "uvicorn==0.53.0"]
+dev = ["pytest==9.1.1", "httpx==0.28.1", "ruff==0.16.8", "build==1.6.1"]
+
+[project.scripts]
+grounded-stream = "grounded_stream.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+grounded_stream = ["static/*.html", "static/*.js", "static/*.css"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "B"]
+
+[tool.ruff.lint.isort]
+known-third-party = ["ultralytics", "clip", "torch"]
