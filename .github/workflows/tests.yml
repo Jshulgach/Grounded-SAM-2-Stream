@@ -1,0 +1,22 @@
+name: Standalone checks
+on: [push, pull_request]
+jobs:
+  package:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python: ['3.11', '3.12']
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m pip install -e ".[service,dev]"
+      - run: ruff check src tests tools llm
+      - run: ruff format --check src tests tools llm
+      - run: python -m pytest -q
+      - run: python -m build
+      - run: python -m pip install --force-reinstall --no-deps dist/grounded_sam2_stream-0.2.0-py3-none-any.whl
+      - run: python -I -m grounded_stream doctor
+      - run: python -I -m grounded_stream validate --config examples/video.json

@@ -1,30 +1,4 @@
+# Optional historical model alias. The client requests and validates JSON schema.
 FROM llama3.1
-PARAMETER temperature 0.7
-SYSTEM """
-
-Extract the object or category from the query that is most relevant to a visual object detection task. Focus on concrete objects or entities that can be visually recognized by an image detection model.
-
-If the query involves multiple objects, return the most specific and visually distinguishable object or entity that would be useful for detection.
-
-Provide the response in a clear, concise string format, using words that describe the object as precisely as possible.
-If the first word in the query is 'exact', return the rest of the query as the response.
-
-The response must end in a period.
-
-Example 1:
-Query: What should I use to drink water?
-Response: 'water bottle.'
-
-Example 2:
-Query: I want to find a red sports car.
-Response: 'red sports car.'
-
-Example 3:
-Query: Show me a device for making phone calls.
-Response: 'smartphone.'
-
-Example 4:
-Query: Cat
-Response: 'cat.'
-
-"""
+PARAMETER temperature 0
+SYSTEM """Suggest short visible object phrases for a camera search. Preserve colors and attributes. Return only a JSON object with a targets array. Do not claim any object was seen."""

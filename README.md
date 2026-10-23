@@ -1,165 +1,127 @@
-# Grounded SAM 2
-Grounded tracking on anything in realtime using natural language queries with [Grounding DINO](https://arxiv.org/abs/2303.05499), [Grounding DINO 1.5](https://arxiv.org/abs/2405.10300), and [Ollama](https://github.com/ollama/ollama) which provides easy access to various [LLMs](https://arxiv.org/abs/2307.06435). 
+# Grounded Stream
 
+**Local object search across cameras and recorded video.** Type `red backpack`, choose sources, and inspect detections in a standalone browser workspace.
 
-<div align=center>
+This is the independent Grounded-SAM-2-Stream project. Version 0.2 replaces the experimental monolithic demo with an installable package, bounded worker processes, a CLI, and a local HTTP API. It currently performs **Grounding DINO object detection**. The historical repository name does not imply that SAM segmentation, tracking, speech recognition, or identity recognition is implemented.
 
-<p align="center">
-<img src="./assets/dino-stream.gif" width="720">
-</p>
+## What works
 
-</div>
+- Direct object phrases, without an LLM or cloud inference account.
+- Recorded video, USB webcams, and HTTP(S) MJPEG sources; up to eight configured sources.
+- Continuous or timed searches, cancellation, inference watchdogs, per-source status, and partial results.
+- Local browser UI with exact-frame boxes, keyboard-accessible controls, JSON export, and narrow-screen layout.
+- CUDA or CPU inference, lazy model loading, normalized boxes, model revision and timing metadata.
+- Versioned HTTP endpoints and server-sent events for future clients.
+- Optional local Ollama phrase suggestions as a Python adapter; suggestions require review before searching.
 
+No microphone opens automatically. Camera sources open only after an explicit search. There is no automatic frame recording or historical index. Model files are cached on disk; search metadata and previews are held in bounded memory. An explicit JSON export saves metadata, not image bytes.
 
-## Contents
-- [Pre-requisites](#pre-requisites)
-- [Installation](#installation)
-- [Single Video Demos](#video-demo)
-- [Multi-camera streaming](#multi-camera-streaming-demo)
-- [Acknowledgements](#acknowledgements)
+## Quick start
 
-## Pre-requisites
-- [Git](https://git-scm.com/downloads)
-- [Anaconda](https://www.anaconda.com/products/distribution)
-- [Python 3.10](https://www.python.org/downloads/)
-- [PyTorch](https://pytorch.org/)
-- [Nvidia CUDA Toolkit (optional)](https://developer.nvidia.com/cuda-toolkit)
+Requires Python 3.11 or newer. Python 3.11 on Windows is the locally validated development environment; CI also defines Linux checks. Start with the included video before configuring a camera.
 
-## Installation
-
-1. Make sure you have Anaconda installed. If not, you can download it [here](https://www.anaconda.com/products/distribution).
-
-2. Prepare your environment:
-   - Create the conda environment with python 3.10
-   ```bash
-   conda create -n dino-llama python=3.10 -y
-   conda activate dino-llama
-   ```
-    - Install [pytorch](https://pytorch.org/) for your system. Follow the official documentation for your specific system.
-
-    - Install the rest of the dependencies from the package
-    ```
-    git clone https://github.com/Jshulgach/Grounded-SAM-2-Stream.git
-    cd Grounded-SAM-2-Stream 
-    pip install -e .
-    ```
-<!--
-#2. Download the pretrained `SAM 2` checkpoints:
-
-```bash
-cd checkpoints
-bash download_ckpts.sh
-```
-- (Optional) 'Grounding DINO' checkpoints should be automatically installed through first-time usage of the model within `transformers` but if you want to install them locally.
-     ```bash
-     mkdir gdino_checkpoints
-     cd gdino_checkpoints
-     bash download_ckpts.sh
-    ```
--->
-3. Prepare the LLM model:
-    - Install Ollama on your respective OS (Linux, MacOS, Windows) by following the [readme instructions](https://github.com/ollama/ollama)
-    - Create the llm model with the customized prompt.
-    ```bash
-    ollama create dino_llama -f <\path\to\repo>\llm\Modelfile
-    ```
-
-
-4. Set up CUDA for GPU usage with Grounding DINO (Optional). You should be able to download the CUDA Toolkit from the [Nvidia website](https://developer.nvidia.com/cuda-toolkit).  
-<!--
-  -  Since we need the CUDA compilation environment to compile the `Deformable Attention` operator used in Grounding DINO, we need to check whether the CUDA environment variables have been set correctly (which you can refer to [Grounding DINO Installation](https://github.com/IDEA-Research/GroundingDINO?tab=readme-ov-file#hammer_and_wrench-install) for more details). You can set the environment variable manually as follows if you want to build a local GPU environment for Grounding DINO to run Grounded SAM 2:
-
-  - ```bash
-    export CUDA_HOME=/path/to/cuda-12.1/
-    ```
--->
-## Video Demo
-
-A demo is included to handlea single video directory passed (or number for webcam). The DINOStream application creates a server and listens for messages from a client. 
-```
-python dino_stream.py 0 
+```sh
+git clone https://github.com/Jshulgach/Grounded-SAM-2-Stream.git
+cd Grounded-SAM-2-Stream
+python -m venv .venv
 ```
 
-Open a separate terminal and send a message to the server. The default server address is `localhost` and the default port is `15555`. You can change the server address and port in the `dino_stream.py` file:
-```python
-import socket
+Activate: Windows PowerShell `.venv\Scripts\Activate.ps1`; Linux/macOS `source .venv/bin/activate`.
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect(('localhost', 15555))
-s.send(b'I am looking for something blue that squirts water')
+Install a matching PyTorch/torchvision pair for your machine using the [official PyTorch installer](https://pytorch.org/get-started/locally/), then:
+
+```sh
+python -m pip install -e ".[vision,service]"
+grounded-stream validate --config examples/video.json
+grounded-stream serve --config examples/video.json
 ```
 
-## Multi-Camera Streaming Demo
+Open **http://127.0.0.1:8765**. Enter `deer` and start a search. The UI defaults to continuous mode; enable **Timed search** for a duration dropdown. Continuous camera searches keep running until Stop, including when the tab closes. Refresh reconnects to the active search. Recorded sources finish at end of file. First use downloads public Grounding DINO weights from Hugging Face; no account is normally required. Allow extra time for a cold download. The sample config pins the model revision.
 
-To run the multi-camera streaming demo, you can run the following command which opens multiple webcams (assuming you have more than one connected):
+The UI and validation commands do not load the detector. `pip install .` installs the lightweight base package; vision and service dependencies are optional.
+
+### CLI
+
+```sh
+grounded-stream doctor
+grounded-stream search --config examples/webcam.json --target mug --continuous
+grounded-stream search --config examples/video.json --target deer --duration 10 --timeout 600
+grounded-stream search --config examples/video.json --target deer --target "fire truck" --output result.json
 ```
-python multi_stream.py
-```
 
+Existing output files are never overwritten. Exit code 0 means every selected source supplied usable frames; 2 includes partial, failed, or timed-out searches. Finding zero objects is a valid completed search, not a failure. Ctrl+C cancels and cleans up workers.
 
-<!--
-### Citation
+### Your cameras
 
-If you find this project helpful for your research, please consider citing the following BibTeX entry.
+Copy `examples/webcam.json` to `config.local.json` and set the USB index, or adapt `examples/network.json` with your MJPEG URL. The network example uses a documentation-only placeholder.
 
-```BibTex
-@misc{ravi2024sam2segmentimages,
-      title={SAM 2: Segment Anything in Images and Videos}, 
-      author={Nikhila Ravi and Valentin Gabeur and Yuan-Ting Hu and Ronghang Hu and Chaitanya Ryali and Tengyu Ma and Haitham Khedr and Roman Rädle and Chloe Rolland and Laura Gustafson and Eric Mintun and Junting Pan and Kalyan Vasudev Alwala and Nicolas Carion and Chao-Yuan Wu and Ross Girshick and Piotr Dollár and Christoph Feichtenhofer},
-      year={2024},
-      eprint={2408.00714},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV},
-      url={https://arxiv.org/abs/2408.00714}, 
-}
-
-@article{liu2023grounding,
-  title={Grounding dino: Marrying dino with grounded pre-training for open-set object detection},
-  author={Liu, Shilong and Zeng, Zhaoyang and Ren, Tianhe and Li, Feng and Zhang, Hao and Yang, Jie and Li, Chunyuan and Yang, Jianwei and Su, Hang and Zhu, Jun and others},
-  journal={arXiv preprint arXiv:2303.05499},
-  year={2023}
-}
-
-@misc{ren2024grounding,
-      title={Grounding DINO 1.5: Advance the "Edge" of Open-Set Object Detection}, 
-      author={Tianhe Ren and Qing Jiang and Shilong Liu and Zhaoyang Zeng and Wenlong Liu and Han Gao and Hongjie Huang and Zhengyu Ma and Xiaoke Jiang and Yihao Chen and Yuda Xiong and Hao Zhang and Feng Li and Peijun Tang and Kent Yu and Lei Zhang},
-      year={2024},
-      eprint={2405.10300},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV}
-}
-
-@misc{ren2024grounded,
-      title={Grounded SAM: Assembling Open-World Models for Diverse Visual Tasks}, 
-      author={Tianhe Ren and Shilong Liu and Ailing Zeng and Jing Lin and Kunchang Li and He Cao and Jiayu Chen and Xinyu Huang and Yukang Chen and Feng Yan and Zhaoyang Zeng and Hao Zhang and Feng Li and Jie Yang and Hongyang Li and Qing Jiang and Lei Zhang},
-      year={2024},
-      eprint={2401.14159},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV}
-}
-
-@article{kirillov2023segany,
-  title={Segment Anything}, 
-  author={Kirillov, Alexander and Mintun, Eric and Ravi, Nikhila and Mao, Hanzi and Rolland, Chloe and Gustafson, Laura and Xiao, Tete and Whitehead, Spencer and Berg, Alexander C. and Lo, Wan-Yen and Doll{\'a}r, Piotr and Girshick, Ross},
-  journal={arXiv:2304.02643},
-  year={2023}
-}
-
-@misc{jiang2024trex2,
-      title={T-Rex2: Towards Generic Object Detection via Text-Visual Prompt Synergy}, 
-      author={Qing Jiang and Feng Li and Zhaoyang Zeng and Tianhe Ren and Shilong Liu and Lei Zhang},
-      year={2024},
-      eprint={2403.14610},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV}
+```json
+{
+  "sources": [
+    {"id":"desk","name":"Desk camera","kind":"webcam","uri":0,"sample_fps":1,"max_width":960},
+    {"id":"gripper","name":"Gripper view","kind":"mjpeg","uri":"http://192.0.2.1:81/stream","sample_fps":1}
+  ],
+  "detector": {"device":"auto","threshold":0.35,"text_threshold":0.25}
 }
 ```
--->
 
-### Acknowledgements
-<!-- - [Segment-Anything-2-Real-Time](https://github.com/Gy920/segment-anything-2-real-time) -->
-<!-- - [segment-anything-2](https://github.com/facebookresearch/segment-anything-2) -->
-- [Grounded-SAM-2](https://github.com/IDEA-Research/Grounded-SAM-2)
-- [GroundingDINO](https://github.com/IDEA-Research/GroundingDINO)
-- - [Ollama](https://ollama.com/)
+Run `grounded-stream serve --config config.local.json`. File paths resolve relative to the configuration. Source IDs are stable and independent of filenames. API requests reference these IDs and cannot supply arbitrary camera URLs or filesystem paths.
 
+Keep one owner per USB camera: close another browser/desktop preview before starting a search on that device. MJPEG reconnects with bounded backoff. RTSP, authenticated camera URLs, and browser-captured frame uploads are not supported yet.
+
+### Offline use
+
+After the model has downloaded, set `"local_files_only": true` and retain the same model/revision. Missing cached weights produce a failed search; this setting does not silently download them. There is no model preload during service startup.
+
+## API
+
+Loopback only. See [the API contract](docs/API.md) and local `/openapi.json`.
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| GET | /v1/health | Worker and source configuration status |
+| GET | /v1/capabilities | Explicit supported features and limits |
+| POST | /v1/searches | Create a continuous or timed search |
+| GET / DELETE | /v1/searches/{id} | Inspect / cancel |
+| GET | /v1/searches/{id}/events | SSE snapshots until terminal |
+| GET | /v1/searches/{id}/evidence/{source}?frame_id=â€¦ | Exact latest processed JPEG |
+
+Set `GROUNDED_STREAM_TOKEN` before starting the service to require a bearer token for every `/v1` endpoint. Enter it in the UI's Connection panel; it is not saved to local storage. Host and origin checks restrict browser access. Do not publish this development service directly to a LAN or the internet.
+
+## Development and validation
+
+```sh
+python -m pip install -e ".[service,dev]"
+python -m pytest -q
+ruff check src tests tools llm
+ruff format --check src tests tools llm
+python -m build
+```
+
+requirements-dev.lock pins the resolved development/service dependency set. To reproduce it, install with `python -m pip install -r requirements-dev.lock`, then `python -m pip install -e . --no-deps`. Model/GPU installation remains separate because platform-specific Torch builds differ.
+
+For local troubleshooting, set `GROUNDED_STREAM_DEBUG=1` to print model exception tracebacks in the server terminal. Debug output can include local paths or query details; review it before sharing.
+
+Tests use spawned fake workers rather than opening personal devices or downloading weights. With the vision extra, a generated-video codec test also runs. An explicit real-inference benchmark is separate:
+
+```sh
+python tools/benchmark_video.py --config examples/video.json --duration 5 --output benchmark.json
+```
+
+It checks a positive phrase, a negative phrase, and two video sources using the same detector process. It rejects live-camera configurations. See [validation evidence](docs/VALIDATION.md) for measured results and remaining gaps.
+
+## Project direction
+
+See [measured performance improvements and optional YOLOE setup](docs/PERFORMANCE.md).
+
+See [model options and related projects](docs/MODEL_OPTIONS.md) for the next performance experiment.
+
+Read [architecture and adoption gates](docs/ARCHITECTURE.md) and [migration from the old demo](docs/MIGRATION.md).
+
+The standalone service comes first. Homebase should later consume its API through an adapter while this repo owns capture, inference, and model dependencies. Speech, historical search, SAM segmentation/tracking, and robotics must be separately tested additions.
+
+## Credits and licenses
+
+Built on [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO), [Transformers](https://huggingface.co/docs/transformers/model_doc/grounding-dino), and ideas from [Grounded-SAM-2](https://github.com/IDEA-Research/Grounded-SAM-2). The optional phrase adapter uses [Ollama](https://docs.ollama.com/capabilities/structured-outputs).
+
+Existing LICENSE, LICENSE_groundingdino, and LICENSE_cctorch notices are preserved. Model weights and optional future backends have their own licenses; review them for your intended distribution. Historical GIFs under assets illustrate the old experiment, not the current UI or proof of tracking.

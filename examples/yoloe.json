@@ -1,0 +1,20 @@
+{
+  "sources": [
+    {
+      "id": "deer-video",
+      "name": "Deer sample",
+      "kind": "file",
+      "uri": "../assets/immature_stag.mp4",
+      "sample_fps": 3
+    }
+  ],
+  "detector": {
+    "backend": "yoloe",
+    "model": "../checkpoints/yoloe-26s-seg.pt",
+    "text_encoder": "../checkpoints/mobileclip2_b.ts",
+    "device": "auto",
+    "threshold": 0.25,
+    "image_size": 640,
+    "local_files_only": true
+  }
+}

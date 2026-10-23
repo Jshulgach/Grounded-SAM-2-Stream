@@ -1,0 +1,16 @@
+{
+  "sources": [
+    {
+      "id": "deer-video",
+      "name": "Deer sample",
+      "kind": "file",
+      "uri": "../assets/immature_stag.mp4",
+      "sample_fps": 1
+    }
+  ],
+  "detector": {
+    "device": "auto",
+    "threshold": 0.35,
+    "revision": "a2bb814dd30d776dcf7e30523b00659f4f141c71"
+  }
+}

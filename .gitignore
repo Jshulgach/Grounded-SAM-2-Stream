@@ -9,7 +9,6 @@ build/*
 _C.*
 outputs/*
 checkpoints/*.pt
-*test*
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -146,3 +145,11 @@ outputs/
 
 .idea/
 /images/
+
+.work/
+.venv*/
+.ruff_cache/
+config.local.json
+
+checkpoints/*.ts
+Ultralytics/
