@@ -21,9 +21,8 @@ class YoloE:
             raise ValueError("Provision the YOLOE checkpoint and text encoder before starting.")
         import clip  # noqa: F401 -- fail before Ultralytics can try installing it
         import torch
-        from ultralytics.nn.text_model import MobileCLIPTS
-
         from ultralytics import YOLOE
+        from ultralytics.nn.text_model import MobileCLIPTS
 
         self.config, self.torch = config, torch
         self.device = config.device
